@@ -1,0 +1,9 @@
+pairs:
+  et: Eric Tsiliacos; erictsiliacos
+  sn: Shatarupa Nandi; snandi
+email:
+  prefix: pair
+  domain: gmail.com 
+  no_solo_prefix: true
+global: false  # Set to true for git-pair to change git configuration for all your projects
+
