@@ -23,6 +23,7 @@ library
                      , wai
                      , http-types
                      , bytestring
+                     , split
   default-language:    Haskell2010
 
 executable monocle-exe
