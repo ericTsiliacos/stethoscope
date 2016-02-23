@@ -1,23 +1,33 @@
 {-# LANGUAGE OverloadedStrings, QuasiQuotes #-}
 module Web.Server where
 
-import           Data.Aeson (Value(..), object, (.=))
-import           Network.Wai (Application)
 import qualified Web.Scotty as S
+import qualified Data.Text.Lazy as L
+import Network.Wai (Application)
 import Network.HTTP.Types.Status (created201)
-import Data.ByteString.Char8
+import Control.Monad.IO.Class (liftIO)
+import Data.Text.Lazy.Encoding (decodeUtf8)
+import Parser.MetricParser
+import Data.IORef
 
-app' :: S.ScottyM ()
-app' = do
+app' :: IORef Metric -> S.ScottyM ()
+app' metricRef = do
   S.post "/metrics" $ do
-    healthMonitorResponse <- S.body
+    body <- S.body
+    let rawEvent = L.unpack $ decodeUtf8 body
+    liftIO $ writeIORef metricRef (metricParser rawEvent)
     S.status created201
 
   S.get "/jobs/monitoring" $ do
-    S.json $ object ["timestamp" .= Number 1454644228, "name" .= String "cpuUsage", "value" .= Number 82.96]
+    currentMetric <- liftIO $ readIORef metricRef
+    S.json (currentMetric :: Metric)
 
 app :: IO Application
-app = S.scottyApp app'
+app = do
+  metricRef <- newIORef Metric { timestamp=0, name="", value=0.0 }
+  S.scottyApp $ app' metricRef
 
 runApp :: IO ()
-runApp = S.scotty 8080 $ app'
+runApp = do
+  metricRef <- newIORef Metric { timestamp=0, name="", value=0.0 }
+  S.scotty 8080 $ app' metricRef

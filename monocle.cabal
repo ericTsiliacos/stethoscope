@@ -24,12 +24,14 @@ library
                      , http-types
                      , bytestring
                      , split
+                     , transformers
+                     , text
   default-language:    Haskell2010
 
 executable monocle-exe
   hs-source-dirs:      app
   main-is:             Main.hs
-  ghc-options:         -threaded -O2 -rtsopts -with-rtsopts=-N
+  ghc-options:         -threaded -O2 -rtsopts -with-rtsopts=-N -Werror
   build-depends:       base
                      , monocle
   default-language:    Haskell2010
@@ -45,7 +47,9 @@ test-suite monocle-test
                      , hspec-wai-json
                      , aeson
                      , bytestring
-  ghc-options:         -threaded -O2 -rtsopts -with-rtsopts=-N
+  other-modules:       Web.ServerSpec
+                     , Parser.MetricParserSpec
+  ghc-options:         -threaded -O2 -rtsopts -with-rtsopts=-N -Werror
   default-language:    Haskell2010
 
 source-repository head

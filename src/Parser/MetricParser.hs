@@ -1,19 +1,20 @@
+{-# LANGUAGE DeriveGeneric #-}
 module Parser.MetricParser where
 
-import Data.ByteString.Char8
 import Data.ByteString.Char8 (unpack)
 import Data.List.Split (splitOn)
+import GHC.Generics
+import Data.Aeson (ToJSON)
 
--- Event format
--- deployment_name.job_name.index.agent_id.metric_name metric_value UTC_timestamp
-type Name = String
-type Value = Float
-type Timestamp = Int
-data Metric = Metric Timestamp Name Value deriving (Eq, Show)
+data Metric = Metric { timestamp :: Int,
+                       name :: String,
+                       value :: Float
+                     } deriving (Eq, Show, Generic)
+instance ToJSON Metric
 
-metricParser :: ByteString -> Metric
+metricParser :: String -> Metric
 metricParser rawEvent = Metric timestamp name value
-  where event = fmap unpack (split ' ' rawEvent)
+  where event = Prelude.words rawEvent
         timestamp = (read (event !! 2) :: Int)
         name = (Prelude.head . Prelude.reverse) $ splitOn "." (event !! 0)
         value = (read (event !! 1) :: Float)

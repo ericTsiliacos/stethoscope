@@ -1,11 +1,11 @@
 {-# LANGUAGE OverloadedStrings, QuasiQuotes #-}
 module Web.ServerSpec where
 
-import           Test.Hspec
-import           Test.Hspec.Wai
-import           Test.Hspec.Wai.JSON
-import           Data.Aeson (Value(..), object, (.=))
-import           Web.Server
+import Test.Hspec
+import Test.Hspec.Wai
+import Test.Hspec.Wai.JSON
+import Data.Aeson (Value(..))
+import Web.Server
 
 spec :: Spec
 spec = with app $ do
@@ -15,4 +15,4 @@ spec = with app $ do
 
     it "responds with metric json" $ do
       post "/metrics" "deployment1.job1.0.agent123.cpu 82.96 1454644228"
-      get "/jobs/monitoring" `shouldRespondWith` [json|{timestamp: 1454644228, name: "cpuUsage", value: 82.96}|]
+      get "/jobs/monitoring" `shouldRespondWith` [json|{timestamp: 1454644228, name: "cpu", value: 82.96}|]
