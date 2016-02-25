@@ -15,7 +15,7 @@ cabal-version:       >=1.10
 
 library
   hs-source-dirs:      src
-  exposed-modules:     Web.Server, Parser.MetricParser
+  exposed-modules:     Web.Server, Parser.EventParser
 
   build-depends:       base >= 4.7 && < 5
                      , aeson
@@ -49,7 +49,7 @@ test-suite monocle-test
                      , aeson
                      , bytestring
   other-modules:       Web.ServerSpec
-                     , Parser.MetricParserSpec
+                     , Parser.EventParserSpec
   ghc-options:         -threaded -O2 -rtsopts -with-rtsopts=-N -Werror
   default-language:    Haskell2010
 
