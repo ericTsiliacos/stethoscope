@@ -21,6 +21,7 @@ library
                      , aeson
                      , scotty
                      , wai
+                     , wai-extra
                      , http-types
                      , bytestring
                      , split

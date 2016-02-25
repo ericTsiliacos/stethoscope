@@ -3,6 +3,7 @@ module Web.Server where
 
 import qualified Web.Scotty as S
 import qualified Data.Text.Lazy as L
+import Network.Wai.Middleware.RequestLogger
 import Network.Wai (Application)
 import Network.HTTP.Types.Status (created201)
 import Control.Monad.IO.Class (liftIO)
@@ -30,4 +31,6 @@ app = do
 runApp :: IO ()
 runApp = do
   metricRef <- newIORef Metric { timestamp=0, name="", value=0.0 }
-  S.scotty 8080 $ app' metricRef
+  S.scotty 8080 $ do
+    S.middleware logStdoutDev
+    app' metricRef
