@@ -3,7 +3,6 @@ module Parser.EventParserSpec where
 
 import  Test.Hspec
 import Parser.EventParser
-import Data.ByteString.Char8
 
 spec :: Spec
 spec = do
