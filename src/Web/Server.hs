@@ -13,6 +13,9 @@ import Data.IORef
 
 app' :: IORef Metric -> S.ScottyM ()
 app' metricRef = do
+  S.get "/" $ do
+    S.html "Welcome to Stethoscope"
+
   S.post "/metrics" $ do
     body <- S.body
     let rawEvent = L.unpack $ decodeUtf8 body

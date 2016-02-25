@@ -9,6 +9,9 @@ import Web.Server
 
 spec :: Spec
 spec = with app $ do
+  describe "GET /" $ do
+    it "responds with a helpful message" $ do
+      get "/" `shouldRespondWith` "Welcome to Stethoscope"
   describe "POST /metrics" $ do
     it "responds with 201" $ do
       post "/metrics" "deployment_name.job_name.index.agent_id.metric_name metric_value UTC_timestamp" `shouldRespondWith` 201
