@@ -1,20 +1,20 @@
-{-# LANGUAGE OverloadedStrings, QuasiQuotes #-}
+{-# LANGUAGE OverloadedStrings #-}
+
 module Web.Server where
 
-import qualified Web.Scotty as S
-import qualified Data.Text.Lazy as L
-import Network.Wai.Middleware.RequestLogger
-import Network.Wai (Application)
-import Network.HTTP.Types.Status (created201)
-import Control.Monad.IO.Class (liftIO)
-import Data.Text.Lazy.Encoding (decodeUtf8)
-import Parser.EventParser
-import Data.IORef
+import           Control.Monad.IO.Class               (liftIO)
+import           Data.IORef
+import           Data.Text.Lazy.Encoding              (decodeUtf8)
+import           Network.HTTP.Types.Status            (created201)
+import           Network.Wai                          (Application)
+import           Network.Wai.Middleware.RequestLogger
+import           Parser.EventParser
+import qualified Web.Scotty                           as S
+import qualified Data.Text.Lazy                       as L
 
 app' :: IORef Event -> S.ScottyM ()
 app' metricRef = do
-  S.get "/" $ do
-    S.html "Welcome to Stethoscope"
+  S.get "/" $ S.html "Welcome to Stethoscope"
 
   S.post "/metrics" $ do
     body <- S.body
