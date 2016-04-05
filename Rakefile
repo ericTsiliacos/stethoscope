@@ -5,7 +5,10 @@ task :tests => [:compile] do
   status = system 'stack test'
   raise "Backend tests failed" unless status
 
-  pid = spawn(".stack-work/dist/x86_64-osx/Cabal-1.22.5.0/build/stethoscope-exe/stethoscope-exe",
+  status = system 'stack build'
+  raise 'failed to compile backend' unless status
+
+  pid = spawn("PORT=8080 .stack-work/dist/x86_64-osx/Cabal-1.22.5.0/build/stethoscope-exe/stethoscope-exe",
               :out => 'spec/logs/server.out',
               :err => "spec/logs/server.err")
   Process.detach(pid)
@@ -27,5 +30,5 @@ end
 desc 'run app'
 task :run => [:compile] do
   puts 'running app...'
-  system 'stack build && stack exec stethoscope-exe'
+  system 'stack build && PORT=8080 stack exec stethoscope-exe'
 end
