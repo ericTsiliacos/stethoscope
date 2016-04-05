@@ -1,11 +1,12 @@
-{-# LANGUAGE OverloadedStrings, QuasiQuotes #-}
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE QuasiQuotes       #-}
 module Web.ServerSpec where
 
-import Test.Hspec
-import Test.Hspec.Wai
-import Test.Hspec.Wai.JSON
-import Data.Aeson (Value(..))
-import Web.Server
+import           Data.Aeson          (Value (..))
+import           Test.Hspec
+import           Test.Hspec.Wai
+import           Test.Hspec.Wai.JSON
+import           Web.Server
 
 spec :: Spec
 spec = with app $
