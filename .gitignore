@@ -8,3 +8,6 @@ cabal.sandbox.config
 .DS_Store
 *.swp
 *.keter
+frontend/elm-stuff
+public/index.html
+spec/logs/

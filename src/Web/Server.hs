@@ -14,7 +14,7 @@ import qualified Data.Text.Lazy                       as L
 
 app' :: IORef Event -> S.ScottyM ()
 app' metricRef = do
-  S.get "/" $ S.html "Welcome to Stethoscope"
+  S.get "/" $ S.file "./public/index.html"
 
   S.post "/metrics" $ do
     body <- S.body
