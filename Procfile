@@ -1,0 +1,1 @@
+web: $PORT cabal run

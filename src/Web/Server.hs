@@ -2,15 +2,17 @@
 
 module Web.Server where
 
+import           Control.Applicative                  ((<$>))
 import           Control.Monad.IO.Class               (liftIO)
 import           Data.IORef
+import qualified Data.Text.Lazy                       as L
 import           Data.Text.Lazy.Encoding              (decodeUtf8)
 import           Network.HTTP.Types.Status            (created201)
 import           Network.Wai                          (Application)
 import           Network.Wai.Middleware.RequestLogger
 import           Parser.EventParser
+import           System.Environment                   (getEnv)
 import qualified Web.Scotty                           as S
-import qualified Data.Text.Lazy                       as L
 
 app' :: IORef Event -> S.ScottyM ()
 app' metricRef = do
@@ -33,7 +35,8 @@ app = do
 
 runApp :: IO ()
 runApp = do
+  port <- read <$> getEnv "PORT"
   metricRef <- newIORef $ Event "" $ Metric "" 0.0
-  S.scotty 8080 $ do
+  S.scotty port $ do
     S.middleware logStdoutDev
     app' metricRef
