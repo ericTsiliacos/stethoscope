@@ -9,5 +9,4 @@ cabal.sandbox.config
 *.swp
 *.keter
 frontend/elm-stuff
-public/index.html
 spec/logs/
