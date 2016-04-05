@@ -22,7 +22,7 @@ eventMailbox =
 
 getEvent : Task Http.Error String
 getEvent =
-  Task.map toString (Http.get eventDecoder "http://localhost:8080/monitoring")
+  Task.map toString (Http.get eventDecoder "/monitoring")
 
 eventDecoder : Decoder (Float)
 eventDecoder = Json.Decode.at ["metric", "value"] Json.Decode.float
