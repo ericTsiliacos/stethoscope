@@ -1,7 +1,6 @@
 language: haskell
 
-ghc:
-  - 7.10
+ghc: 7.10
 
 script:
   - rake tests
