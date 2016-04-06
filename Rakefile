@@ -26,6 +26,11 @@ task :ci => [:compile] do
   status = system 'stack --no-terminal --skip-ghc-check build'
   raise 'failed to compile backend' unless status
 
+  status = system 'touch spec/logs/server.out'
+  raise 'failed to create server.out' unless status
+  status = 'touch spec/logs/server.err'
+  raise 'failed to create server.err' unless status
+
   pid = spawn("PORT=8080 stack --no-terminal --skip-ghc-check exec stethoscope-exe",
               :out => 'spec/logs/server.out',
               :err => "spec/logs/server.err")
