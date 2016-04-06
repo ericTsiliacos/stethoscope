@@ -36,6 +36,6 @@ addons:
     - ghc-7.10.2
 
 script:
-  - touch spec/logs/server.out
-  - touch spec/logs/server.err
+  - touch $TRAVIS_BUILD_DIR/spec/logs/server.out
+  - touch $TRAVIS_BUILD_DIR/spec/logs/server.err
   - rake ci
