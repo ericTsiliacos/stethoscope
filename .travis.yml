@@ -36,7 +36,7 @@ addons:
     - ghc-7.10.2
 
 script:
-  - mkdir $TRAVIS_BUILD_DIR/logs
+  - mkdir $TRAVIS_BUILD_DIR/spec/logs
   - touch $TRAVIS_BUILD_DIR/spec/logs/server.out
   - touch $TRAVIS_BUILD_DIR/spec/logs/server.err
   - rake ci
