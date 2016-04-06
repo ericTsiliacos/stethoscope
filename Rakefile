@@ -26,7 +26,9 @@ task :ci => [:compile] do
   status = system 'stack --no-terminal --skip-ghc-check build'
   raise 'failed to compile backend' unless status
 
-  pid = spawn("PORT=8080 stack --no-terminal --skip-ghc-check exec stethoscope-exe")
+  pid = spawn("PORT=8080 stack --no-terminal --skip-ghc-check exec stethoscope-exe",
+              :out => 'spec/logs/server.out',
+              :err => "spec/logs/server.err")
   Process.detach(pid)
 
   puts `bundle exec rspec`
