@@ -36,4 +36,6 @@ addons:
     - ghc-7.10.2
 
 script:
+  - touch spec/logs/server.out
+  - touch spec/logs/server.err
   - rake ci
