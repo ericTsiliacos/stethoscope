@@ -8,7 +8,7 @@ task :tests => [:compile] do
   status = system 'stack build'
   raise 'failed to compile backend' unless status
 
-  pid = spawn("PORT=8080 .stack-work/dist/x86_64-osx/Cabal-1.22.5.0/build/stethoscope-exe/stethoscope-exe",
+  pid = spawn("PORT=8080 stack exec stethoscope-exe",
               :out => 'spec/logs/server.out',
               :err => "spec/logs/server.err")
   Process.detach(pid)
@@ -18,11 +18,27 @@ task :tests => [:compile] do
   Process.kill('TERM', pid)
 end
 
+desc 'run tests on ci'
+task :ci => [:compile] do
+  status = system 'stack --no-terminal --skip-ghc-check test'
+  raise "Backend tests failed" unless status
+
+  status = system 'stack --no-terminal --skip-ghc-check build'
+  raise 'failed to compile backend' unless status
+
+  pid = spawn("PORT=8080 stack --no-terminal --skip-ghc-check exec stethoscope-exe")
+  Process.detach(pid)
+
+  puts `bundle exec rspec`
+
+  Process.kill('TERM', pid)
+end
+
 desc 'compile frontend'
 task :compile do
   Dir.chdir 'frontend' do
     puts 'compiling frontend...'
-    status = system 'elm make Main.elm --output=../public/index.html'
+    status = system 'elm make Main.elm --yes --output=../public/index.html'
     raise "Failed to compile frontend" unless status
   end
 end
