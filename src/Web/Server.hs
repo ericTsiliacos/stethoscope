@@ -14,34 +14,34 @@ import           System.Environment                   (getEnv)
 import           Types.Metric
 import           Web.Scotty
 
-data Persistable a = Persistable {
+data Repository a = Repository {
   fetch :: IO a,
   save :: a -> IO ()
 }
 
-inMemory :: IORef a -> Persistable a
-inMemory ref = Persistable {
+localRepository :: IORef a -> Repository a
+localRepository ref = Repository {
   fetch = readIORef ref,
   save = writeIORef ref
 }
 
-app' :: Persistable Event -> ScottyM ()
-app' persist = do
+app' :: Repository Event -> ScottyM ()
+app' repository = do
   get "/" $ file "./public/index.html"
 
   post "/metrics" $ do
     rawEventJson <- body
-    liftIO $ save persist (fromRight $ parseEvent rawEventJson)
+    liftIO $ repository `save` fromRight (parseEvent rawEventJson)
     status created201
 
   get "/monitoring" $ do
-    currentMetric <- liftIO $ fetch persist
+    currentMetric <- liftIO $ fetch repository
     json (currentMetric :: Event)
 
 app :: IO Application
 app = do
   eventRef <- newIORef $ Event 0 $ Metric "" 0.0
-  scottyApp $ app' $ inMemory eventRef
+  scottyApp $ app' $ localRepository eventRef
 
 runApp :: IO ()
 runApp = do
@@ -49,4 +49,4 @@ runApp = do
   eventRef <- newIORef $ Event 0 $ Metric "" 0.0
   scotty port $ do
     middleware logStdoutDev
-    app' $ inMemory eventRef
+    app' $ localRepository eventRef
