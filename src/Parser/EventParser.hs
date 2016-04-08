@@ -1,29 +1,31 @@
-{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE DeriveGeneric     #-}
+{-# LANGUAGE OverloadedStrings #-}
 module Parser.EventParser where
 
-import           Data.Aeson            (FromJSON, ToJSON, defaultOptions,
-                                        genericToJSON, toJSON)
-import           Data.ByteString.Char8 (unpack)
-import           Data.List.Split       (splitOn)
+import           Data.Aeson           (FromJSON (..), eitherDecode)
+import           Data.ByteString.Lazy
+import           Data.Text
 import           GHC.Generics
+import qualified Types.Metric         as T
 
-data Event = Event { time   :: String,
-                     metric :: Metric
-                   } deriving (Eq, Show, Generic)
-instance FromJSON Event
-instance ToJSON Event where
-  toJSON = genericToJSON  defaultOptions
+data Series = Series {
+  metric   :: Text,
+  points   :: [(Int, Float)]
+} deriving (Show, Generic)
+instance FromJSON Series
 
-data Metric = Metric { name  :: String,
-                       value :: Float
-                     } deriving (Eq, Show, Generic)
-instance FromJSON Metric
-instance ToJSON Metric where
-  toJSON = genericToJSON  defaultOptions
+data RawEvent = RawEvent {
+  series :: [Series]
+} deriving (Show, Generic)
+instance FromJSON RawEvent
 
-eventParser :: String -> Event
-eventParser rawEvent = Event (show timestamp) $ Metric name value
-  where event = Prelude.words rawEvent
-        timestamp = read (event !! 2) :: Int
-        name = last $ splitOn "." $ head event
-        value = read (event !! 1) :: Float
+parseEvent :: ByteString -> Either String T.Event
+parseEvent rawEventJson =  convertToEvent <$> eitherDecode rawEventJson
+
+convertToEvent :: RawEvent -> T.Event
+convertToEvent rawEvent = T.Event timestamp $ T.Metric metricName metricValue
+  where fstSeries = Prelude.head . series $ rawEvent
+        rawName = metric fstSeries
+        metricName = if "cpu" `isInfixOf ` rawName then "cpu" else ""
+        timestamp = Prelude.fst . Prelude.head . points $ fstSeries
+        metricValue = Prelude.snd . Prelude.head . points $ fstSeries

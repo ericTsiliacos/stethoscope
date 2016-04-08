@@ -1,13 +1,27 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE QuasiQuotes       #-}
 module Parser.EventParserSpec where
 
 import           Parser.EventParser
 import           Test.Hspec
+import           Text.RawString.QQ
+import           Types.Metric
 
 spec :: Spec
 spec =
   describe "EventParser" $
-    it "returns an Event parsed from the response" $
-      eventParser
-        "deployment_name.job_name.index.agent_id.cpu_usage 82.96 1454644228"
-        `shouldBe` Event "1454644228" (Metric "cpu_usage" 82.96)
+    it "returns an Event parsed from the response" $ do
+      let rawJson = [r|
+        {
+          "series": [{
+            "metric": "bosh.healthmonitor.system.cpu.user",
+            "points": [ [1456458457, 0.2] ],
+            "type": "gauge",
+            "host": null,
+            "device": null,
+            "tags": ["job:worker_cpi", "index:10", "deployment:project", "agent:8440617 f - d298 - 4 fa1 - 8 f94 - 1177 bcf513d7"]
+          }]
+        }
+      |]
+
+      parseEvent rawJson `shouldBe` Right (Event 1456458457 (Metric "cpu" 0.2))

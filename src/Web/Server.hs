@@ -2,41 +2,39 @@
 
 module Web.Server where
 
-import           Control.Applicative                  ((<$>))
 import           Control.Monad.IO.Class               (liftIO)
+import           Data.Either.Unwrap
 import           Data.IORef
-import qualified Data.Text.Lazy                       as L
-import           Data.Text.Lazy.Encoding              (decodeUtf8)
 import           Network.HTTP.Types.Status            (created201)
 import           Network.Wai                          (Application)
 import           Network.Wai.Middleware.RequestLogger
 import           Parser.EventParser
 import           System.Environment                   (getEnv)
-import qualified Web.Scotty                           as S
+import           Types.Metric
+import           Web.Scotty
 
-app' :: IORef Event -> S.ScottyM ()
+app' :: IORef Event -> ScottyM ()
 app' metricRef = do
-  S.get "/" $ S.file "./public/index.html"
+  get "/" $ file "./public/index.html"
 
-  S.post "/metrics" $ do
-    body <- S.body
-    let rawEvent = L.unpack $ decodeUtf8 body
-    liftIO $ writeIORef metricRef (eventParser rawEvent)
-    S.status created201
+  post "/metrics" $ do
+    rawEventJson <- body
+    liftIO $ writeIORef metricRef (fromRight $ parseEvent rawEventJson)
+    status created201
 
-  S.get "/monitoring" $ do
+  get "/monitoring" $ do
     currentMetric <- liftIO $ readIORef metricRef
-    S.json (currentMetric :: Event)
+    json (currentMetric :: Event)
 
 app :: IO Application
 app = do
-  metricRef <- newIORef $ Event "" $ Metric "" 0.0
-  S.scottyApp $ app' metricRef
+  metricRef <- newIORef $ Event 0 $ Metric "" 0.0
+  scottyApp $ app' metricRef
 
 runApp :: IO ()
 runApp = do
   port <- read <$> getEnv "PORT"
-  metricRef <- newIORef $ Event "" $ Metric "" 0.0
-  S.scotty port $ do
-    S.middleware logStdoutDev
+  metricRef <- newIORef $ Event 0 $ Metric "" 0.0
+  scotty port $ do
+    middleware logStdoutDev
     app' metricRef

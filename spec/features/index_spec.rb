@@ -1,8 +1,11 @@
 require_relative '../spec_helper'
+require_relative '../request_helpers'
 require 'net/http'
 require 'uri'
 
 describe '/' do
+  include RequestHelpers
+
   it 'displays a friendly message' do
     visit '/'
 
@@ -10,14 +13,23 @@ describe '/' do
   end
 
   it 'displays the last known cpu usage' do
-    uri = URI.parse("http://localhost:8080/metrics")
-    http = Net::HTTP.new(uri.host, uri.port)
-    request = Net::HTTP::Post.new(uri.request_uri)
-    request.body = 'deployment1.job1.0.agent123.cpu 82.96 1454644228'
-    http.request(request)
+  data = {
+    :series => [{
+      :metric => "bosh.healthmonitor.system.cpu.user",
+      :points => [
+        [1456458457, 0.2]
+      ],
+      :type => "gauge",
+      :host => nil,
+      :device => nil,
+      :tags => ["job:worker_cpi", "index:10", "deployment:project", "agent:8440617 f - d298 - 4 fa1 - 8 f94 - 1177 bcf513d7"]
+      }]
+    }
+
+    post data
 
     visit '/'
 
-    expect(page).to have_text '82.96'
+    expect(page).to have_text '0.2'
   end
 end
