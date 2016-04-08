@@ -2,6 +2,7 @@
 
 module Web.Server where
 
+import           Control.Applicative                  ((<$>))
 import           Control.Monad.IO.Class               (liftIO)
 import           Data.Either.Unwrap
 import           Data.IORef

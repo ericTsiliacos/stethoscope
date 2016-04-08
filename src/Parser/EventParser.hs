@@ -2,6 +2,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 module Parser.EventParser where
 
+import           Control.Applicative  ((<$>))
 import           Data.Aeson           (FromJSON (..), eitherDecode)
 import           Data.ByteString.Lazy
 import           Data.Text
@@ -9,8 +10,8 @@ import           GHC.Generics
 import qualified Types.Metric         as T
 
 data Series = Series {
-  metric   :: Text,
-  points   :: [(Int, Float)]
+  metric :: Text,
+  points :: [(Int, Float)]
 } deriving (Show, Generic)
 instance FromJSON Series
 
