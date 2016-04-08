@@ -1,0 +1,42 @@
+---
+resources:
+- name: stethoscope
+  type: git
+  source:
+    uri: https://github.com/hsienchiaolee/stethoscope.git
+
+jobs:
+- name: unit-test
+  public: true
+  plan:
+  - get: stethoscope
+    trigger: true
+  - task: bundle-install
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: 10.84.17.162:5000/stethoscope-docker
+      inputs:
+      - name: stethoscope
+      run:
+        path: sh
+        args:
+        - -exc
+        - |
+          cd stethoscope
+          bundle install
+  - task: test
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: 10.84.17.162:5000/stethoscope-docker
+      inputs:
+      - name: stethoscope
+      run:
+        path: rake
+        args:
+        - ci
