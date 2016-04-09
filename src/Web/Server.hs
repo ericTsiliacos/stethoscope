@@ -4,12 +4,10 @@ module Web.Server where
 
 import           Control.Applicative                  ((<$>))
 import           Control.Monad.IO.Class               (liftIO)
-import           Data.Either.Unwrap
 import           Data.IORef
 import           Network.HTTP.Types.Status            (created201)
 import           Network.Wai                          (Application)
 import           Network.Wai.Middleware.RequestLogger
-import           Parser.EventParser
 import           Repositories.LocalRepository
 import           System.Environment                   (getEnv)
 import           Types.Metric
