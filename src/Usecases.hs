@@ -8,7 +8,7 @@ import           Repositories.LocalRepository
 import           Types.Metric
 
 parseAndStoreRawEvent :: Repository Event -> ByteString -> IO ()
-parseAndStoreRawEvent repository rawEvent = do
+parseAndStoreRawEvent repository rawEvent =
   repository `save` fromRight (parseEvent rawEvent)
 
 fetchLastEvent :: Repository Event -> IO Event
