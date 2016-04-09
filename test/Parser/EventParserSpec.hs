@@ -10,7 +10,7 @@ import           Types.Metric
 spec :: Spec
 spec =
   describe "EventParser" $
-    it "returns an Event parsed from the response" $ do
+    it "returns an Event parsed from a raw bosh event" $ do
       let rawJson = [r|
         {
           "series": [{
