@@ -10,20 +10,10 @@ import           Network.HTTP.Types.Status            (created201)
 import           Network.Wai                          (Application)
 import           Network.Wai.Middleware.RequestLogger
 import           Parser.EventParser
+import           Repositories.LocalRepository
 import           System.Environment                   (getEnv)
 import           Types.Metric
 import           Web.Scotty
-
-data Repository a = Repository {
-  fetch :: IO a,
-  save  :: a -> IO ()
-}
-
-localRepository :: IORef a -> Repository a
-localRepository ref = Repository {
-  fetch = readIORef ref,
-  save = writeIORef ref
-}
 
 app' :: Repository Event -> ScottyM ()
 app' repository = do

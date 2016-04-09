@@ -1,6 +1,9 @@
 {-# LANGUAGE DeriveGeneric     #-}
 {-# LANGUAGE OverloadedStrings #-}
-module Parser.EventParser where
+
+module Parser.EventParser (
+  parseEvent
+) where
 
 import           Control.Applicative  ((<$>))
 import           Data.Aeson           (FromJSON (..), eitherDecode)
