@@ -13,6 +13,7 @@ import           Parser.EventParser
 import           Repositories.LocalRepository
 import           System.Environment                   (getEnv)
 import           Types.Metric
+import           Usecases
 import           Web.Scotty
 
 app' :: Repository Event -> ScottyM ()
@@ -20,13 +21,11 @@ app' repository = do
   get "/" $ file "./public/index.html"
 
   post "/metrics" $ do
-    rawEventJson <- body
-    liftIO $ repository `save` fromRight (parseEvent rawEventJson)
+    liftIO . parseAndStoreRawEvent repository =<< body
     status created201
 
-  get "/monitoring" $ do
-    currentMetric <- liftIO $ fetch repository
-    json (currentMetric :: Event)
+  get "/monitoring" $
+    json =<< liftIO (fetchLastEvent repository)
 
 app :: IO Application
 app = do

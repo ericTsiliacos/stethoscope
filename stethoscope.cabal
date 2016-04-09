@@ -19,6 +19,7 @@ library
                      , Parser.EventParser
                      , Types.Metric
                      , Repositories.LocalRepository
+                     , Usecases
 
   build-depends:       base >= 4.7 && < 5
                      , aeson
