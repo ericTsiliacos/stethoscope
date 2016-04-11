@@ -2,14 +2,11 @@ module Usecases where
 
 import           Data.ByteString.Lazy
 import           Data.ByteString.Lazy.Char8
-import           Data.Either.Unwrap
-import           Parser.EventParser
 import           Repositories.LocalRepository
 import           Types.Metric
 
-parseAndStoreRawEvent :: Repository Event -> ByteString -> IO ()
-parseAndStoreRawEvent repository rawEvent =
-  repository `save` fromRight (parseEvent rawEvent)
+storeEvent :: Repository IO Event -> Event -> IO ()
+storeEvent repository event = repository `save` event
 
-fetchLastEvent :: Repository Event -> IO Event
+fetchLastEvent :: Repository IO Event -> IO Event
 fetchLastEvent = fetch

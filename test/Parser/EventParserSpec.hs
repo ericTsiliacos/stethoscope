@@ -24,4 +24,4 @@ spec =
         }
       |]
 
-      parseEvent rawJson `shouldBe` Right (Event 1456458457 (Metric "cpu" 0.2))
+      parseEvent rawJson `shouldBe` Just (Event 1456458457 (Metric "cpu" 0.2))
