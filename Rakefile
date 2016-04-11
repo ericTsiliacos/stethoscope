@@ -40,7 +40,7 @@ desc 'compile frontend'
 task :compile do
   Dir.chdir 'frontend' do
     puts 'compiling frontend...'
-    status = system 'elm make Main.elm --yes --output=../public/index.html'
+    status = system 'LANG=C.UTF-8 elm make Main.elm --yes --output=../public/index.html'
     raise "Failed to compile frontend" unless status
   end
 end
