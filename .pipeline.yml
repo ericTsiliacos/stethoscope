@@ -14,10 +14,7 @@ jobs:
   - task: bundle-install
     config:
       platform: linux
-      image_resource:
-        type: docker-image
-        source:
-          repository: 10.84.17.162:5000/stethoscope-docker
+      image: docker:///hsienchiaolee/docker
       inputs:
       - name: stethoscope
       run:
@@ -30,13 +27,16 @@ jobs:
   - task: test
     config:
       platform: linux
-      image_resource:
-        type: docker-image
-        source:
-          repository: 10.84.17.162:5000/stethoscope-docker
+      image: docker:///hsienchiaolee/docker
       inputs:
       - name: stethoscope
       run:
-        path: rake
+        path: sh
         args:
-        - ci
+        - -exc
+        - |
+          cd stethoscope
+          mkdir spec/logs
+          touch spec/logs/server.out
+          touch spec/logs/server.err
+          rake ci
