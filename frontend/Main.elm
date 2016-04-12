@@ -12,10 +12,6 @@ view cpu =
     span [] [ text cpu ]
   ]
 
-sendToEventMailbox : String -> Task.Task x ()
-sendToEventMailbox result =
-  Signal.send eventMailbox.address result
-
 eventMailbox : Signal.Mailbox String
 eventMailbox =
   Signal.mailbox "--"
@@ -29,7 +25,7 @@ eventDecoder = Json.Decode.at ["metric", "value"] Json.Decode.float
 
 port runner : Task Http.Error ()
 port runner =
-  getEvent `Task.andThen` sendToEventMailbox
+  getEvent `Task.andThen` Signal.send eventMailbox.address
 
 main : Signal Html
 main = Signal.map view eventMailbox.signal

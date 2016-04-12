@@ -10434,19 +10434,12 @@ Elm.Main.make = function (_elm) {
    var eventDecoder = A2($Json$Decode.at,_U.list(["metric","value"]),$Json$Decode.$float);
    var getEvent = A2($Task.map,$Basics.toString,A2($Http.get,eventDecoder,"/monitoring"));
    var eventMailbox = $Signal.mailbox("--");
-   var sendToEventMailbox = function (result) {    return A2($Signal.send,eventMailbox.address,result);};
-   var runner = Elm.Native.Task.make(_elm).perform(A2($Task.andThen,getEvent,sendToEventMailbox));
+   var runner = Elm.Native.Task.make(_elm).perform(A2($Task.andThen,getEvent,$Signal.send(eventMailbox.address)));
    var view = function (cpu) {
       return A2($Html.div,
       _U.list([]),
       _U.list([A2($Html.h1,_U.list([]),_U.list([$Html.text("Welcome to Stethoscope")])),A2($Html.span,_U.list([]),_U.list([$Html.text(cpu)]))]));
    };
    var main = A2($Signal.map,view,eventMailbox.signal);
-   return _elm.Main.values = {_op: _op
-                             ,view: view
-                             ,sendToEventMailbox: sendToEventMailbox
-                             ,eventMailbox: eventMailbox
-                             ,getEvent: getEvent
-                             ,eventDecoder: eventDecoder
-                             ,main: main};
+   return _elm.Main.values = {_op: _op,view: view,eventMailbox: eventMailbox,getEvent: getEvent,eventDecoder: eventDecoder,main: main};
 };</script></head><body><script type="text/javascript">Elm.fullscreen(Elm.Main)</script></body></html>
