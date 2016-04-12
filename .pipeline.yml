@@ -3,7 +3,7 @@ resources:
 - name: stethoscope
   type: git
   source:
-    uri: https://github.com/hsienchiaolee/stethoscope.git
+    uri: https://github.com/ericTsiliacos/stethoscope.git
 
 jobs:
 - name: unit-test
