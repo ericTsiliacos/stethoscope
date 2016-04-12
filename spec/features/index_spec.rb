@@ -13,17 +13,24 @@ describe '/' do
   end
 
   it 'displays the last known cpu usage' do
-  data = {
-    :series => [{
-      :metric => "bosh.healthmonitor.system.cpu.user",
-      :points => [
-        [1456458457, 0.2]
-      ],
-      :type => "gauge",
-      :host => nil,
-      :device => nil,
-      :tags => ["job:worker_cpi", "index:10", "deployment:project", "agent:8440617 f - d298 - 4 fa1 - 8 f94 - 1177 bcf513d7"]
-      }]
+    data = {
+      series: [
+        {
+          metric: "bosh.healthmonitor.system.cpu.user",
+          points: [
+            [1456458457, 0.2]
+          ],
+          type: "gauge",
+          host: nil,
+          device: nil,
+          tags: [
+            "job:worker_cpi",
+            "index:10",
+            "deployment:project",
+            "agent:8440617 f - d298 - 4 fa1 - 8 f94 - 1177 bcf513d7"
+          ]
+        }
+      ]
     }
 
     post data
