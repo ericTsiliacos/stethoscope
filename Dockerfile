@@ -14,17 +14,16 @@ RUN apt-get update && apt-get install -y git-core \
   libcurl4-openssl-dev \
   python-software-properties \
   libffi-dev \
-  software-properties-common \
-  phantomjs
+  software-properties-common
 
 # Install Haskell compiler
 RUN add-apt-repository -y ppa:hvr/ghc
 RUN apt-get update && apt-get install -y --force-yes ghc-7.10.2
 ENV PATH /opt/ghc/7.10.2/bin:$PATH
 
-# Install nodejs 
+# Install nodejs
 RUN curl -sL https://deb.nodesource.com/setup_4.x | bash -
-RUN apt-get install -y nodejs npm
+RUN apt-get install -y nodejs phantomjs
 RUN npm install -g elm@0.16.0
 ENV PATH /usr/lib/node_modules/elm/Elm-Platform/0.16.0/.cabal-sandbox/bin:$PATH
 
