@@ -1,7 +1,7 @@
 {-# LANGUAGE DeriveGeneric     #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module Parser.EventParser (
+module Web.Parser.EventParser (
   parseEvent
 ) where
 

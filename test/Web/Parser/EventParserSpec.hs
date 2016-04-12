@@ -1,8 +1,8 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE QuasiQuotes       #-}
-module Parser.EventParserSpec where
+module Web.Parser.EventParserSpec where
 
-import           Parser.EventParser
+import           Web.Parser.EventParser
 import           Test.Hspec
 import           Text.RawString.QQ
 import           Types.Metric

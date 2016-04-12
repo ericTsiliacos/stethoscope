@@ -11,7 +11,7 @@ import           Data.Maybe                           (fromJust)
 import           Network.HTTP.Types.Status            (created201)
 import           Network.Wai                          (Application)
 import           Network.Wai.Middleware.RequestLogger
-import           Parser.EventParser
+import           Web.Parser.EventParser
 import           Repositories.LocalRepository
 import           System.Environment                   (getEnv)
 import           Types.Metric
