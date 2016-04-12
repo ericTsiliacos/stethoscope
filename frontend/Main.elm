@@ -1,31 +1,67 @@
 module Main (..) where
 
 import Html exposing (..)
+import Effects exposing (..)
+import StartApp
+import Html.Attributes exposing (type', placeholder)
+import Html.Events exposing (onClick)
 import Json.Decode exposing (..)
 import Task exposing (..)
 import Http exposing (..)
 
-view : String -> Html
-view cpu =
+type Action
+  = NewEvent (Maybe String)
+  | NoOp
+
+update : Action -> Model -> (Model, Effects Action)
+update action model =
+  case action of
+    NewEvent maybeCpu ->
+      ( Model (Maybe.withDefault model.cpu maybeCpu)
+      , Effects.none
+      )
+    NoOp ->
+      ( model
+      , Effects.none
+      )
+
+view : Signal.Address Action -> Model -> Html
+view address model =
   div [] [
     h1 [] [ text "Welcome to Stethoscope" ],
-    span [] [ text cpu ]
+    span [] [ text model.cpu ]
   ]
 
-eventMailbox : Signal.Mailbox String
-eventMailbox =
-  Signal.mailbox "--"
-
-getEvent : Task Http.Error String
+getEvent : Effects Action
 getEvent =
-  Task.map toString (Http.get eventDecoder "/monitoring")
+  Http.get eventDecoder "/monitoring"
+  |> Task.map toString
+  |> Task.toMaybe
+  |> Task.map NewEvent
+  |> Effects.task
 
 eventDecoder : Decoder (Float)
 eventDecoder = Json.Decode.at ["metric", "value"] Json.Decode.float
 
-port runner : Task Http.Error ()
-port runner =
-  getEvent `Task.andThen` Signal.send eventMailbox.address
+type alias Model = { cpu : String }
+
+init : (Model, Effects Action)
+init =
+  ( Model "--"
+  , getEvent
+  )
+
+app : StartApp.App Model
+app =
+  StartApp.start
+    { init = init
+    , update = update
+    , view = view
+    , inputs = []
+    }
 
 main : Signal Html
-main = Signal.map view eventMailbox.signal
+main = app.html
+
+port tasks : Signal (Task Never ())
+port tasks = app.tasks
