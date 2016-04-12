@@ -1,0 +1,57 @@
+{
+	"id": "15d37bef-0e1f-b5cc-c266-2a091d603288",
+	"name": "Endpoints",
+	"description": "",
+	"order": [
+		"b8bf4a03-e3db-b902-bb34-54c78a4f8ecf",
+		"1e2855ba-b335-94ba-d79d-f8dd35f3f5f7"
+	],
+	"folders": [],
+	"timestamp": 1460419488085,
+	"owner": "",
+	"remoteLink": "",
+	"public": false,
+	"requests": [
+		{
+			"id": "1e2855ba-b335-94ba-d79d-f8dd35f3f5f7",
+			"headers": "",
+			"url": "https://polar-bayou-42244.herokuapp.com/metrics",
+			"pathVariables": {},
+			"preRequestScript": null,
+			"method": "POST",
+			"collectionId": "15d37bef-0e1f-b5cc-c266-2a091d603288",
+			"data": [],
+			"dataMode": "raw",
+			"name": "/metrics",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1460419787384,
+			"version": 2,
+			"responses": [],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"rawModeData": "{\n  \"series\": [{\n\t\t\"metric\": \"bosh.healthmonitor.system.cpu.user\",\n\t\t\"points\": [\n\t\t\t[1456458457, 0.2]\n\t\t],\n\t\t\"type\": \"gauge\",\n\t\t\"host\": null,\n\t\t\"device\": null,\n\t\t\"tags\": [\"job:worker_cpi\", \"index:10\", \"deployment:project\", \"agent:8440617 f - d298 - 4 fa1 - 8 f94 - 1177 bcf513d7\"]\n\t}]\n}"
+		},
+		{
+			"id": "b8bf4a03-e3db-b902-bb34-54c78a4f8ecf",
+			"headers": "",
+			"url": "https://polar-bayou-42244.herokuapp.com/monitoring",
+			"pathVariables": {},
+			"preRequestScript": null,
+			"method": "GET",
+			"collectionId": "15d37bef-0e1f-b5cc-c266-2a091d603288",
+			"data": null,
+			"dataMode": "params",
+			"name": "/monitoring",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1460419488084,
+			"version": 2,
+			"responses": [],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {}
+		}
+	]
+}
