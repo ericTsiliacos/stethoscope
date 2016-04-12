@@ -11,24 +11,9 @@ jobs:
   plan:
   - get: stethoscope
     trigger: true
-  - task: bundle-install
-    config:
-      platform: linux
-      image: docker:///hsienchiaolee/docker
-      inputs:
-      - name: stethoscope
-      run:
-        path: sh
-        args:
-        - -exc
-        - |
-          cd stethoscope
-          cat Rakefile
-          bundle install
   - task: test
     config:
-      platform: linux
-      image: docker:///hsienchiaolee/docker
+      platform: darwin
       inputs:
       - name: stethoscope
       run:
@@ -37,6 +22,7 @@ jobs:
         - -exc
         - |
           cd stethoscope
+          bundle install
           mkdir spec/logs
           touch spec/logs/server.out
           touch spec/logs/server.err
