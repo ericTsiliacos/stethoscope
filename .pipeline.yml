@@ -23,6 +23,7 @@ jobs:
         - -exc
         - |
           cd stethoscope
+          cat Rakefile
           bundle install
   - task: test
     config:
