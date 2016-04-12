@@ -1,5 +1,5 @@
 {-# LANGUAGE DeriveGeneric #-}
-module Types.Metric where
+module Types.Event where
 
 import           Data.Aeson   (FromJSON, ToJSON, defaultOptions, genericToJSON,
                                toJSON)
