@@ -1,7 +1,5 @@
 require_relative '../spec_helper'
 require_relative '../request_helpers'
-require 'net/http'
-require 'uri'
 
 describe '/' do
   include RequestHelpers

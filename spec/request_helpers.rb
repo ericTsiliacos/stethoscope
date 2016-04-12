@@ -1,3 +1,6 @@
+require 'net/http'
+require 'uri'
+
 module RequestHelpers
   def post(data)
     uri = URI.parse("http://localhost:8080/metrics")
