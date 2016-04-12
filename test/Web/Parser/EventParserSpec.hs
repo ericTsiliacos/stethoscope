@@ -5,7 +5,7 @@ module Web.Parser.EventParserSpec where
 import           Web.Parser.EventParser
 import           Test.Hspec
 import           Text.RawString.QQ
-import           Types.Metric
+import           Types.Event
 
 spec :: Spec
 spec =

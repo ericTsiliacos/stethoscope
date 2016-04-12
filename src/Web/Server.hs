@@ -14,7 +14,7 @@ import           Network.Wai.Middleware.RequestLogger
 import           Web.Parser.EventParser
 import           Repositories.LocalRepository
 import           System.Environment                   (getEnv)
-import           Types.Metric
+import           Types.Event
 import           Usecases
 import           Web.Scotty
 

@@ -5,13 +5,13 @@ module Web.Parser.EventParser (
   parseEvent
 ) where
 
-import           Control.Applicative  ((<$>), (<*>), pure)
+import           Control.Applicative  (pure, (<$>), (<*>))
 import           Data.Aeson           (FromJSON (..), decode)
 import           Data.ByteString.Lazy
 import           Data.Maybe
 import           Data.Text
 import           GHC.Generics
-import qualified Types.Metric         as T
+import qualified Types.Event         as T
 
 data Series = Series {
   metric :: Text,
