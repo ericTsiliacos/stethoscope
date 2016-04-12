@@ -24,12 +24,11 @@ app' eventRepository = do
 
   post "/metrics" $ do
     parsedEvent <- parseEvent <$> body
-    let storeEventAction = storeEvent eventRepository <$> parsedEvent
-    mapM_ liftIO storeEventAction
+    mapM_ liftIO $ storeEvent eventRepository <$> parsedEvent
     status created201
 
   get "/monitoring" $
-    json =<< liftIO (fetchLastEvent eventRepository)
+    liftIO (fetchLastEvent eventRepository) >>= json
 
 app :: IO Application
 app = do

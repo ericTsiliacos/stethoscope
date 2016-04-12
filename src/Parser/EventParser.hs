@@ -25,12 +25,16 @@ data RawEvent = RawEvent {
 instance FromJSON RawEvent
 
 parseEvent :: ByteString ->  Maybe T.Event
-parseEvent rawEventJson = convertToEvent =<< decode rawEventJson
+parseEvent rawEventJson = decode rawEventJson >>= convertToEvent
 
 convertToEvent :: RawEvent -> Maybe T.Event
-convertToEvent rawEvent = T.Event <$> timestamp <*> (T.Metric metricName <$> metricValue)
+convertToEvent rawEvent = T.Event <$> timestamp <*> (T.Metric <$> metricName <*> metricValue)
   where series' = series rawEvent
         rawName = metric <$> series'
-        metricName = if "cpu" `isInfixOf ` Prelude.head rawName then "cpu" else ""
+        metricName = extractMetricName rawName
         timestamp = listToMaybe $ Prelude.concat $ fmap fst . points <$> series'
         metricValue = listToMaybe $ Prelude.concat $ fmap snd . points <$> series'
+
+extractMetricName :: [Text] -> Maybe Text
+extractMetricName (x:xs) = if "cpu" `isInfixOf ` x then Just "cpu" else Nothing
+extractMetricName _ = Nothing
