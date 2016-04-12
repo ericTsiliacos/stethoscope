@@ -10936,11 +10936,11 @@ Elm.StartApp.make = function (_elm) {
    var App = F3(function (a,b,c) {    return {html: a,model: b,tasks: c};});
    var Config = F4(function (a,b,c,d) {    return {init: a,update: b,view: c,inputs: d};});
    return _elm.StartApp.values = {_op: _op,start: start,Config: Config,App: App};
-};Elm.Main = Elm.Main || {};
-Elm.Main.make = function (_elm) {
+};Elm.CpuDisplay = Elm.CpuDisplay || {};
+Elm.CpuDisplay.make = function (_elm) {
    "use strict";
-   _elm.Main = _elm.Main || {};
-   if (_elm.Main.values) return _elm.Main.values;
+   _elm.CpuDisplay = _elm.CpuDisplay || {};
+   if (_elm.CpuDisplay.values) return _elm.CpuDisplay.values;
    var _U = Elm.Native.Utils.make(_elm),
    $Basics = Elm.Basics.make(_elm),
    $Debug = Elm.Debug.make(_elm),
@@ -10952,16 +10952,19 @@ Elm.Main.make = function (_elm) {
    $Maybe = Elm.Maybe.make(_elm),
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm),
-   $StartApp = Elm.StartApp.make(_elm),
    $Task = Elm.Task.make(_elm);
    var _op = {};
-   var Model = function (a) {    return {cpu: a};};
    var eventDecoder = A2($Json$Decode.at,_U.list(["metric","value"]),$Json$Decode.$float);
    var view = F2(function (address,model) {
       return A2($Html.div,
       _U.list([]),
       _U.list([A2($Html.h1,_U.list([]),_U.list([$Html.text("Welcome to Stethoscope")])),A2($Html.span,_U.list([]),_U.list([$Html.text(model.cpu)]))]));
    });
+   var NoOp = {ctor: "NoOp"};
+   var NewEvent = function (a) {    return {ctor: "NewEvent",_0: a};};
+   var getEvent = $Effects.task(A2($Task.map,NewEvent,$Task.toMaybe(A2($Task.map,$Basics.toString,A2($Http.get,eventDecoder,"/monitoring")))));
+   var Model = function (a) {    return {cpu: a};};
+   var init = {ctor: "_Tuple2",_0: Model("--"),_1: getEvent};
    var update = F2(function (action,model) {
       var _p0 = action;
       if (_p0.ctor === "NewEvent") {
@@ -10970,22 +10973,27 @@ Elm.Main.make = function (_elm) {
             return {ctor: "_Tuple2",_0: model,_1: $Effects.none};
          }
    });
-   var NoOp = {ctor: "NoOp"};
-   var NewEvent = function (a) {    return {ctor: "NewEvent",_0: a};};
-   var getEvent = $Effects.task(A2($Task.map,NewEvent,$Task.toMaybe(A2($Task.map,$Basics.toString,A2($Http.get,eventDecoder,"/monitoring")))));
-   var init = {ctor: "_Tuple2",_0: Model("--"),_1: getEvent};
-   var app = $StartApp.start({init: init,update: update,view: view,inputs: _U.list([])});
+   return _elm.CpuDisplay.values = {_op: _op,init: init,update: update,view: view,Model: Model};
+};Elm.Main = Elm.Main || {};
+Elm.Main.make = function (_elm) {
+   "use strict";
+   _elm.Main = _elm.Main || {};
+   if (_elm.Main.values) return _elm.Main.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $CpuDisplay = Elm.CpuDisplay.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $Effects = Elm.Effects.make(_elm),
+   $Html = Elm.Html.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $StartApp = Elm.StartApp.make(_elm),
+   $Task = Elm.Task.make(_elm);
+   var _op = {};
+   var app = $StartApp.start({init: $CpuDisplay.init,update: $CpuDisplay.update,view: $CpuDisplay.view,inputs: _U.list([])});
    var main = app.html;
    var tasks = Elm.Native.Task.make(_elm).performSignal("tasks",app.tasks);
-   return _elm.Main.values = {_op: _op
-                             ,NewEvent: NewEvent
-                             ,NoOp: NoOp
-                             ,update: update
-                             ,view: view
-                             ,getEvent: getEvent
-                             ,eventDecoder: eventDecoder
-                             ,Model: Model
-                             ,init: init
-                             ,app: app
-                             ,main: main};
+   return _elm.Main.values = {_op: _op,app: app,main: main};
 };</script></head><body><script type="text/javascript">Elm.fullscreen(Elm.Main)</script></body></html>
