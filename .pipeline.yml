@@ -1,0 +1,29 @@
+---
+resources:
+- name: stethoscope
+  type: git
+  source:
+    uri: https://github.com/ericTsiliacos/stethoscope.git
+
+jobs:
+- name: unit-test
+  public: true
+  plan:
+  - get: stethoscope
+    trigger: true
+  - task: test
+    config:
+      platform: darwin
+      inputs:
+      - name: stethoscope
+      run:
+        path: sh
+        args:
+        - -exc
+        - |
+          cd stethoscope
+          bundle install
+          mkdir spec/logs
+          touch spec/logs/server.out
+          touch spec/logs/server.err
+          rake ci
