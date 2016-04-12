@@ -14,7 +14,8 @@ RUN apt-get update && apt-get install -y git-core \
   libcurl4-openssl-dev \
   python-software-properties \
   libffi-dev \
-  software-properties-common
+  software-properties-common \
+  phantomjs
 
 # Install Haskell compiler
 RUN add-apt-repository -y ppa:hvr/ghc
@@ -23,7 +24,7 @@ ENV PATH /opt/ghc/7.10.2/bin:$PATH
 
 # Install nodejs 
 RUN curl -sL https://deb.nodesource.com/setup_4.x | bash -
-RUN apt-get install -y nodejs
+RUN apt-get install -y nodejs npm
 RUN npm install -g elm@0.16.0
 ENV PATH /usr/lib/node_modules/elm/Elm-Platform/0.16.0/.cabal-sandbox/bin:$PATH
 
@@ -48,7 +49,3 @@ RUN eval "$(rbenv init -)"
 RUN rbenv install -v 2.2.0 && rbenv global 2.2.0
 RUN gem install bundler
 RUN bundle config --global silence_root_warning 1
-
-USER root
-RUN apt-get update && apt-get install -y phantomjs
-USER dev
