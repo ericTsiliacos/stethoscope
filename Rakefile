@@ -48,5 +48,5 @@ end
 desc 'run app'
 task :run => [:compile] do
   puts 'running app...'
-  system 'stack build && PORT=8080 stack exec stethoscope-exe'
+  system 'stack build --allow-different-user && PORT=8080 stack exec --allow-different-user stethoscope-exe'
 end
