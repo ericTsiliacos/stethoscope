@@ -10946,6 +10946,8 @@ Elm.CpuDisplay.make = function (_elm) {
    $Debug = Elm.Debug.make(_elm),
    $Effects = Elm.Effects.make(_elm),
    $Html = Elm.Html.make(_elm),
+   $Html$Attributes = Elm.Html.Attributes.make(_elm),
+   $Html$Events = Elm.Html.Events.make(_elm),
    $Http = Elm.Http.make(_elm),
    $Json$Decode = Elm.Json.Decode.make(_elm),
    $List = Elm.List.make(_elm),
@@ -10955,24 +10957,67 @@ Elm.CpuDisplay.make = function (_elm) {
    $Task = Elm.Task.make(_elm);
    var _op = {};
    var eventDecoder = A2($Json$Decode.at,_U.list(["metric","value"]),$Json$Decode.$float);
+   var NoOp = {ctor: "NoOp"};
+   var Filter = {ctor: "Filter"};
+   var UpdateEndTime = function (a) {    return {ctor: "UpdateEndTime",_0: a};};
+   var UpdateStartTime = function (a) {    return {ctor: "UpdateStartTime",_0: a};};
    var view = F2(function (address,model) {
       return A2($Html.div,
       _U.list([]),
-      _U.list([A2($Html.h1,_U.list([]),_U.list([$Html.text("Welcome to Stethoscope")])),A2($Html.span,_U.list([]),_U.list([$Html.text(model.cpu)]))]));
+      _U.list([A2($Html.h1,_U.list([]),_U.list([$Html.text("Welcome to Stethoscope")]))
+              ,A2($Html.span,_U.list([]),_U.list([$Html.text(model.cpu)]))
+              ,A2($Html.form,
+              _U.list([]),
+              _U.list([A2($Html.input,
+                      _U.list([$Html$Attributes.placeholder("Start")
+                              ,$Html$Attributes.value(model.startTime)
+                              ,A3($Html$Events.on,
+                              "input",
+                              $Html$Events.targetValue,
+                              function (str) {
+                                 return A2($Signal.message,address,UpdateStartTime(str));
+                              })]),
+                      _U.list([]))
+                      ,A2($Html.input,
+                      _U.list([$Html$Attributes.placeholder("End")
+                              ,$Html$Attributes.value(model.endTime)
+                              ,A3($Html$Events.on,
+                              "input",
+                              $Html$Events.targetValue,
+                              function (str) {
+                                 return A2($Signal.message,address,UpdateEndTime(str));
+                              })]),
+                      _U.list([]))
+                      ,A2($Html.button,
+                      _U.list([$Html$Attributes.type$("button"),A2($Html$Events.onClick,address,Filter)]),
+                      _U.list([$Html.text("Filter")]))]))]));
    });
-   var NoOp = {ctor: "NoOp"};
    var NewEvent = function (a) {    return {ctor: "NewEvent",_0: a};};
-   var getEvent = $Effects.task(A2($Task.map,NewEvent,$Task.toMaybe(A2($Task.map,$Basics.toString,A2($Http.get,eventDecoder,"/monitoring")))));
-   var Model = function (a) {    return {cpu: a};};
-   var init = {ctor: "_Tuple2",_0: Model("--"),_1: getEvent};
+   var getEvent = function (maybeQuery) {
+      var monitoringUrl = function () {
+         var _p0 = maybeQuery;
+         if (_p0.ctor === "Nothing") {
+               return "/monitoring";
+            } else {
+               return A2($Http.url,"/monitoring",_p0._0);
+            }
+      }();
+      return $Effects.task(A2($Task.map,NewEvent,$Task.toMaybe(A2($Task.map,$Basics.toString,A2($Http.get,eventDecoder,monitoringUrl)))));
+   };
    var update = F2(function (action,model) {
-      var _p0 = action;
-      if (_p0.ctor === "NewEvent") {
-            return {ctor: "_Tuple2",_0: Model(A2($Maybe.withDefault,model.cpu,_p0._0)),_1: $Effects.none};
-         } else {
-            return {ctor: "_Tuple2",_0: model,_1: $Effects.none};
-         }
+      var _p1 = action;
+      switch (_p1.ctor)
+      {case "NewEvent": return {ctor: "_Tuple2",_0: _U.update(model,{cpu: A2($Maybe.withDefault,model.cpu,_p1._0)}),_1: $Effects.none};
+         case "Filter": return {ctor: "_Tuple2"
+                               ,_0: model
+                               ,_1: getEvent($Maybe.Just(_U.list([{ctor: "_Tuple2",_0: "start",_1: model.startTime}
+                                                                 ,{ctor: "_Tuple2",_0: "end",_1: model.endTime}])))};
+         case "UpdateStartTime": return {ctor: "_Tuple2",_0: _U.update(model,{startTime: _p1._0}),_1: $Effects.none};
+         case "UpdateEndTime": return {ctor: "_Tuple2",_0: _U.update(model,{endTime: _p1._0}),_1: $Effects.none};
+         default: return {ctor: "_Tuple2",_0: model,_1: $Effects.none};}
    });
+   var Model = F3(function (a,b,c) {    return {cpu: a,startTime: b,endTime: c};});
+   var init = {ctor: "_Tuple2",_0: A3(Model,"--","",""),_1: getEvent($Maybe.Nothing)};
    return _elm.CpuDisplay.values = {_op: _op,init: init,update: update,view: view,Model: Model};
 };Elm.Main = Elm.Main || {};
 Elm.Main.make = function (_elm) {

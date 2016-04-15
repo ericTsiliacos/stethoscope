@@ -15,7 +15,7 @@ import qualified Types.Event         as T
 
 data Series = Series {
   metric :: Text,
-  points :: [(Int, Float)]
+  points :: [(Integer, Float)]
 } deriving (Show, Generic)
 instance FromJSON Series
 
