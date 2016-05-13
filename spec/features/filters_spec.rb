@@ -9,10 +9,9 @@ describe 'filtering' do
       visit '/'
 
       events = [
-        createEvent([1456458457, 1]),
-        createEvent([1456458458, 2]),
-        createEvent([1456458459, 3]),
-        createEvent([1456458460, 21321])
+        createEvent([1456458457, 15]),
+        createEvent([1456458458, 20]),
+        createEvent([1456458459, 40])
       ]
 
       events.each { |data| post data }
@@ -21,7 +20,7 @@ describe 'filtering' do
       fill_in 'End', with: '1456458459'
       click_on 'Filter'
 
-      expect(page).to have_text '2'
+      expect(page).to have_text '25'
     end
   end
 end
