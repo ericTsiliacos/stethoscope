@@ -1,13 +1,14 @@
-module CpuDisplay
+module CpuDisplay exposing
   ( init
   , update
   , view
-  , Model) where
+  )
 
-import Effects exposing (Effects)
+-- where
+
 import Html exposing (Html, div, h1, span, text, button, input, form)
 import Html.Attributes exposing (type', placeholder, value)
-import Html.Events exposing (onClick, targetValue, on)
+import Html.Events exposing (onClick, onInput)
 import Http exposing (get, url)
 import Json.Decode exposing (Decoder)
 import Task exposing (Task)
@@ -18,45 +19,57 @@ type alias Model =
   , endTime : String
   }
 
-init : (Model, Effects Action)
+init : (Model, Cmd Msg)
 init =
   ( Model "--" "" ""
   , getEvent Nothing
   )
 
-type Action
-  = NewEvent (Maybe String)
+type Msg
+  = FetchEventSucceed String
+  | FetchEventFail Http.Error
   | UpdateStartTime String
   | UpdateEndTime String
   | Filter
   | NoOp
 
-update : Action -> Model -> (Model, Effects Action)
+update : Msg -> Model -> ( Model, Cmd Msg )
 update action model =
   case action of
-    NewEvent maybeCpu ->
-      ( { model | cpu = (Maybe.withDefault model.cpu maybeCpu) }
-      , Effects.none
+    NoOp ->
+      ( model, Cmd.none )
+
+    FetchEventSucceed newCpu ->
+      ( { model
+          | cpu = newCpu
+        }
+      , Cmd.none
       )
+
+    FetchEventFail _ ->
+      ( model, Cmd.none )
+
     Filter ->
       ( model
       , getEvent (Just [("start", model.startTime), ("end", model.endTime)])
       )
+
     UpdateStartTime newStartTime ->
-      ( { model | startTime = newStartTime }
-      , Effects.none
-      )
-    UpdateEndTime newEndTime ->
-      ( { model | endTime = newEndTime }
-      , Effects.none
-      )
-    NoOp ->
-      ( model
-      , Effects.none
+      ( { model
+          | startTime = newStartTime
+        }
+      , Cmd.none
       )
 
-view : Signal.Address Action -> Model -> Html
-view address model =
+    UpdateEndTime newEndTime ->
+      ( { model
+          | endTime = newEndTime
+        }
+      , Cmd.none
+      )
+
+view : Model -> Html Msg
+view model =
   div []
     [
       h1 [] [ text "Welcome to Stethoscope" ],
@@ -66,22 +79,22 @@ view address model =
           input
             [ placeholder "Start"
             , value model.startTime
-            , on "input" targetValue (\str -> Signal.message address (UpdateStartTime str))
+            , onInput UpdateStartTime
             ]
             [],
           input
             [ placeholder "End"
             , value model.endTime
-            , on "input" targetValue (\str -> Signal.message address (UpdateEndTime str))
+            , onInput UpdateEndTime
             ]
             [],
           button
-            [ type' "button", onClick address Filter ]
+            [ type' "button", onClick Filter ]
             [ text "Filter" ]
         ]
     ]
 
-getEvent : Maybe (List (String, String)) -> Effects Action
+getEvent : Maybe (List (String, String)) -> Cmd Msg
 getEvent maybeQuery =
   let monitoringUrl =
     case maybeQuery of
@@ -90,11 +103,7 @@ getEvent maybeQuery =
       Just queryParams ->
         url "/monitoring" queryParams
   in
-    get eventDecoder monitoringUrl
-    |> Task.map toString
-    |> Task.toMaybe
-    |> Task.map NewEvent
-    |> Effects.task
+    Task.perform FetchEventFail FetchEventSucceed (get eventDecoder monitoringUrl |> Task.map toString)
 
 eventDecoder : Decoder (Float)
 eventDecoder = Json.Decode.at ["metric", "value"] Json.Decode.float

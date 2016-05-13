@@ -1,22 +1,15 @@
-module Main (..) where
+module Main exposing (..)
 
-import CpuDisplay exposing (init, update, view, Model)
-import Effects exposing (Never)
-import Html exposing (Html)
-import StartApp
-import Task exposing (Task)
+-- where
 
-app : StartApp.App Model
-app =
-  StartApp.start
+import Html.App exposing (program)
+import CpuDisplay exposing (init, update, view)
+
+main : Program Never
+main =
+  program
     { init = init
-    , update = update
     , view = view
-    , inputs = []
+    , update = update
+    , subscriptions = always Sub.none
     }
-
-main : Signal Html
-main = app.html
-
-port tasks : Signal (Task Never ())
-port tasks = app.tasks
